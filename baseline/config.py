@@ -10,10 +10,10 @@ class ResourcesConfig(object):
     model_name = "single.pkl"
 
 class TrainingConfig(object):
-    lr = 1e-4
+    lr = 1e-5
     batch_size = 32
     epochs = 50
-    weight_decay = 1e-5
+    weight_decay = 1e-4
     
 
 class ModelConfig(object):
@@ -21,7 +21,6 @@ class ModelConfig(object):
     embedd_size = 50
     vocab_size = 10000  #need to extract from glove... a little big
     hidden_size = 128 
-
     top_words = 10000
 
 

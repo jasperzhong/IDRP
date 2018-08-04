@@ -83,7 +83,7 @@ class Model(nn.Module):
         output = F.relu(self.linear1(output))
         output = F.relu(self.linear2(output))
         output = self.linear3(output)
-        output = F.softmax(output, dim=1)
+        output = F.log_softmax(output, dim=1)
 
         return output
     

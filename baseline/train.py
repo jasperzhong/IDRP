@@ -35,7 +35,7 @@ def train():
     train_arg1_sents, train_arg2_sents, train_labels, _ = load_PDTB("Train")
     dev_arg1_sents, dev_arg2_sents, dev_labels, _ = load_PDTB("Dev")
     
-    loss_func = nn.CrossEntropyLoss()
+    loss_func = nn.CrossEntropyLoss(torch.FloatTensor([7,4,2,21]).to(device))
     optimizer = optim.Adam(model.parameters(), lr=config.training.lr, 
                 weight_decay=config.training.weight_decay) # L2
     
