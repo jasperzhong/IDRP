@@ -10,7 +10,9 @@ import numpy as np
 class Model(nn.Module):
     def __init__(self, vocab_size, embed_size, hidden_size, seq_len, n_layers=1):
         super(Model, self).__init__()
+        self.embed_size = embed_size
         self.hidden_size = hidden_size
+        self.n_layers = n_layers
 
         self.embedding = nn.Embedding(
             vocab_size,
@@ -86,7 +88,7 @@ class Model(nn.Module):
         output = F.log_softmax(output, dim=1)
 
         return output
-    
+
 
 
 '''

@@ -21,7 +21,7 @@ def load_PDTB(type, word_cnt={}):
     with open(config.resourses.data_base_dir + "im"+ type +"Corenlp", "r") as f:
         data = json.load(f)
     
-    stop_words = load_stopwords()
+    stop_words = []
     max_seq_len = config.model.seq_len
 
     arg1_sents = []
@@ -87,7 +87,7 @@ def build_up_word_dict():
 
     # build up word dict
     for key, _ in word_cnt:
-        word_to_id[num_words] = num_words
+        word_to_id[key] = num_words
         num_words += 1
     config.model.vocab_size = len(word_to_id)
     return word_to_id

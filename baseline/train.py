@@ -12,7 +12,7 @@ from model import Model
 from utils import *
 
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 
 def train():
     choise = "cuda" if torch.cuda.is_available() else "cpu"
@@ -28,14 +28,18 @@ def train():
                     config.model.hidden_size,
                     config.model.seq_len,
                     n_layers=2)
-
+    def weights_init(m):
+        if isinstance(m, nn.Linear):
+            torch.nn.init.normal(m.weight.data,mean=0,std=0.1)
+            torch.nn.init.constant(m.bias.data, 0.1)
+    model.apply(weights_init)
     model.to(device)
     word_to_id = build_up_word_dict()
     batch_size = config.training.batch_size
     train_arg1_sents, train_arg2_sents, train_labels, _ = load_PDTB("Train")
     dev_arg1_sents, dev_arg2_sents, dev_labels, _ = load_PDTB("Dev")
     
-    loss_func = nn.CrossEntropyLoss(torch.FloatTensor([7,4,2,21]).to(device))
+    loss_func = nn.NLLLoss(torch.FloatTensor([0.1583, 0.08736, 0.02784, 0.42224]).to(device))
     optimizer = optim.Adam(model.parameters(), lr=config.training.lr, 
                 weight_decay=config.training.weight_decay) # L2
     
