@@ -89,7 +89,7 @@ def build_up_word_dict():
     for key, _ in word_cnt:
         word_to_id[key] = num_words
         num_words += 1
-    config.model.vocab_size = len(word_to_id)
+    config.model.vocab_size = len(word_to_id) + 1
     return word_to_id
 
 def data_loader(type, batch_size):

@@ -19,7 +19,7 @@ class TrainingConfig(object):
 class ModelConfig(object):
     seq_len = 50  #need to compute... 
     embedd_size = 50
-    vocab_size = 10000  #need to extract from glove... a little big
+    vocab_size = 10001  #need to extract from glove... a little big
     hidden_size = 128 
     top_words = 10000
 
