@@ -45,7 +45,7 @@ class Model(nn.Module):
 
         self.linear3 = nn.Linear(
             100,
-            4
+            2
         )
 
     def forward(self, arg1, arg2):

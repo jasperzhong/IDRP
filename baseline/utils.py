@@ -17,8 +17,8 @@ def load_stopwords():
     return stop_words
 
 
-def load_PDTB(type, word_cnt={}):
-    with open(config.resourses.data_base_dir + "im"+ type +"Corenlp", "r") as f:
+def load_PDTB(type, classes, word_cnt={}):
+    with open(config.resourses.data_base_dir + "im"+ type +"Corenlp_" + classes, "r") as f:
         data = json.load(f)
     
     stop_words = []
@@ -30,20 +30,11 @@ def load_PDTB(type, word_cnt={}):
 
     for _ ,value in data.items():
         label = value['Sense'].split('.')[0]
-        
-        if label == "Comparison":
-            label = 0
-        elif label == "Contingency":
+        if label == classes:
             label = 1
-        elif label == "Expansion":
-            label = 2
-        elif label == "Temporal":
-            label = 3
-        elif label == "NoRel":
-            continue
         else:
-            raise ValueError("unrecognized label")
-        
+            label = 0
+    
         arg1_words = []
         for word in value['Arg1']['Tokens']:
             if not stop_words or word['Word'] not in stop_words:
@@ -67,19 +58,17 @@ def load_PDTB(type, word_cnt={}):
             labels.append(label)
         # loss samples: train(432)  test(34)  dev(36)
 
-
-    
     return arg1_sents, arg2_sents, labels, word_cnt
 
 
 
-def build_up_word_dict():
+def build_up_word_dict(classes):
     word_to_id = {'OOV':0}
     num_words = 1
     word_cnt = {}
-    _, _, _, word_cnt = load_PDTB("Train", word_cnt)
-    _, _, _, word_cnt = load_PDTB("Test", word_cnt)
-    _, _, _, word_cnt = load_PDTB("Dev", word_cnt)
+    _, _, _, word_cnt = load_PDTB("Train",classes, word_cnt)
+    _, _, _, word_cnt = load_PDTB("Test",classes, word_cnt)
+    _, _, _, word_cnt = load_PDTB("Dev",classes, word_cnt)
 
     # first 10k words
     word_cnt = sorted(word_cnt.items(), key = lambda x:int(x[1]), reverse=True)
@@ -92,8 +81,8 @@ def build_up_word_dict():
     config.model.vocab_size = len(word_to_id) + 1
     return word_to_id
 
-def data_loader(type, batch_size):
-    arg1_sents, arg2_sents, labels, _ = load_PDTB(type)
+def data_loader(type,classes, batch_size):
+    arg1_sents, arg2_sents, labels, _ = load_PDTB(type,classes)
     print(len(arg1_sents))
     for i in range(0, len(arg1_sents), batch_size):
         yield (arg1_sents[i:i+batch_size], 

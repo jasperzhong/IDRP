@@ -5,7 +5,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-from sklearn.metrics import classification_report
+from sklearn.metrics import f1_score
 
 from config import config
 from model import Model
@@ -14,11 +14,11 @@ from utils import *
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 
-def train():
+def train(classes):
     choise = "cuda" if torch.cuda.is_available() else "cpu"
     print(choise + " is available")
     device = torch.device(choise)
-
+    
     try:
         model = torch.load(config.resourses.model_path + config.resourses.model_name)
     except FileNotFoundError:
@@ -34,15 +34,17 @@ def train():
             torch.nn.init.constant(m.bias.data, 0.1)
     model.apply(weights_init)
     model.to(device)
-    word_to_id = build_up_word_dict()
-    batch_size = config.training.batch_size
-    train_arg1_sents, train_arg2_sents, train_labels, _ = load_PDTB("Train")
-    dev_arg1_sents, dev_arg2_sents, dev_labels, _ = load_PDTB("Dev")
     
-    loss_func = nn.NLLLoss(torch.FloatTensor([0.1583, 0.08736, 0.02784, 0.42224]).to(device))
+    word_to_id = build_up_word_dict(classes)
+    batch_size = config.training.batch_size
+    train_arg1_sents, train_arg2_sents, train_labels, _ = load_PDTB("Train",classes)
+    dev_arg1_sents, dev_arg2_sents, dev_labels, _ = load_PDTB("Dev",classes)
+    
+    loss_func = nn.NLLLoss()
     optimizer = optim.Adam(model.parameters(), lr=config.training.lr, 
                 weight_decay=config.training.weight_decay) # L2
     
+    best_f1 = 0
     print("Start training!")
     for epoch in range(config.training.epochs):
         total_loss = 0.0
@@ -83,9 +85,14 @@ def train():
 
                 output = model(arg1, arg2)
                 result.extend(list(torch.max(output, 1)[1].cpu().numpy())) 
-
-            print(classification_report(dev_labels, result))
+            f1 = f1_score(dev_labels, result, average='binary')
+            print("Epoch %d dev f1: %.3f" % (epoch, f1))
+        if f1 > best_f1:
+            best_f1 = f1
+            print("Model save!")
+            torch.save(model, config.resourses.model_path + config.resourses.model_name + classes + '.pkl')
+            
 
 
 if __name__=="__main__":
-    train()
+    train("Temporal")

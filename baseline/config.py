@@ -7,11 +7,11 @@ class ResourcesConfig(object):
     stop_word_path = "data/english.txt"
     data_base_dir = "data/"
     model_path = "model/"
-    model_name = "single.pkl"
+    model_name = "single"
 
 class TrainingConfig(object):
     lr = 1e-3
-    batch_size = 64
+    batch_size = 128
     epochs = 50
     weight_decay = 1e-4
     
