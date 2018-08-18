@@ -23,7 +23,7 @@ class PDTB(object):
         arg2_sents = []
         labels = []
 
-        for _ ,value in data.items():
+        for value in data:
             label = value['Sense'].split('.')[0]
 
             if label == "Comparison":
