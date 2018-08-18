@@ -43,7 +43,7 @@ def train(config):
     word_to_id = pdtb.build_vocab()
 
     batch_size = config.training.batch_size
-    max_seq_len = config.max_seq_len
+    max_seq_len = config.model.max_seq_len
     
     loss_func = nn.NLLLoss(torch.FloatTensor([7, 4, 2, 21]).to(device))
     optimizer = optim.Adam(model.parameters(), lr=config.training.lr, 
