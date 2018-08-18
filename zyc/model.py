@@ -3,7 +3,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 
-from config import config 
 
 class Model(nn.Module):
     def __init__(self, vocab_size, embed_size, hidden_size, seq_len, 
@@ -88,11 +87,11 @@ class Model(nn.Module):
 
         return output
     
-    def load_pretrained_embedding(self, word_dict):
+    def load_pretrained_embedding(self, glove_path, word_dict):
         embedding = self.embedding.weight.data
         self.embedding.weight.requires_grad = False
         cnt = 0
-        with open(config.resourses.glove_path, "r") as f:
+        with open(glove_path, "r") as f:
             for line in f:
                 parsed = line.rstrip().split(' ') 
                 assert(len(parsed) == embedding.size(1) + 1)

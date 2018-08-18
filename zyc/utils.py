@@ -14,7 +14,7 @@ class PDTB(object):
         self.vocab_size = 2
         
     def load_PDTB(self, mode):
-        with open(self.config.resourses.data_base_dir + mode +"_pdtb", "r") as f:
+        with open(self.config.resourses.data_base_dir + mode +"_pdtb.json", "r") as f:
             data = json.load(f)
     
         arg1_sents = []

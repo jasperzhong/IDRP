@@ -21,7 +21,7 @@ def train(config):
     model = Model(config.model.vocab_size, 
                 config.model.embedd_size,
                 config.model.hidden_size,
-                config.model.seq_len,
+                config.model.max_seq_len,
                 config.model.d_a,
                 config.model.r,
                 n_layers=2)
@@ -38,8 +38,8 @@ def train(config):
     model.to(device)
 
     pdtb = PDTB(config)
-    train_arg1_sents, train_arg2_sents, train_labels = pdtb.load_PDTB("Train")
-    dev_arg1_sents, dev_arg2_sents, dev_labels = pdtb.load_PDTB("Dev")
+    train_arg1_sents, train_arg2_sents, train_labels = pdtb.load_PDTB("train")
+    dev_arg1_sents, dev_arg2_sents, dev_labels = pdtb.load_PDTB("dev")
     word_to_id = pdtb.build_vocab()
 
     batch_size = config.training.batch_size
@@ -50,7 +50,7 @@ def train(config):
                 weight_decay=config.training.weight_decay) # L2
     
     start = time.time()
-    model.load_pretrained_embedding(word_to_id)
+    model.load_pretrained_embedding(config.resourses.glove_path, word_to_id)
     print("Loading embedding taking %.3f s" % (time.time() - start))
 
     print("Start training!")
