@@ -40,7 +40,7 @@ class PDTB(object):
                     continue
                 
                 arg1_words = []
-                for word in value['Arg1']['Tokens']:
+                for word in value['Arg1']:
                     w = word['Word']
                     arg1_words.append(w)
                     if not self.word_cnt.get(w):
@@ -48,7 +48,7 @@ class PDTB(object):
                     self.word_cnt[w] += 1
 
                 arg2_words = []
-                for word in value['Arg2']['Tokens']:
+                for word in value['Arg2']:
                     w = word['Word']
                     arg2_words.append(w)
                     if not self.word_cnt.get(w):
