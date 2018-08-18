@@ -5,7 +5,7 @@ some configurations
 class ResourcesConfig(object):
     glove_path = "../data/glove.840B.300d.txt"
     stop_word_path = "../data/english.txt"
-    data_base_dir = "../data/"
+    data_base_dir = "../data/lin/"
     model_path = "../model/"
     model_name = "single.pkl"
 
@@ -17,9 +17,9 @@ class TrainingConfig(object):
     
 
 class ModelConfig(object):
-    seq_len = 50  #need to compute... 
-    embedd_size = 50
-    vocab_size = 10001  
+    max_seq_len = 100 
+    embedd_size = 300
+    vocab_size = 10002
     hidden_size = 128 
     r = 10
     d_a = 128
@@ -32,4 +32,3 @@ class Config(object):
     training = TrainingConfig()
     model = ModelConfig()
 
-config = Config()
