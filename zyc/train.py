@@ -46,6 +46,10 @@ def train():
     optimizer = optim.Adam(model.parameters(), lr=config.training.lr, 
                 weight_decay=config.training.weight_decay) # L2
     
+    start = time.time()
+    model.load_pretrained_embedding(word_to_id)
+    print("Loading embedding taking %.3f s" % (time.time() - start))
+
     print("Start training!")
     for epoch in range(config.training.epochs):
         total_loss = 0.0
