@@ -45,7 +45,7 @@ class Model(nn.Module):
 
         self.linear3 = nn.Linear(
             100,
-            2
+            4
         )
 
     def forward(self, arg1, arg2):
@@ -88,6 +88,21 @@ class Model(nn.Module):
         output = F.log_softmax(output, dim=1)
 
         return output
+    
+    def load_pretrained_embedding(self, glove_path, word_dict):
+        embedding = self.embedding.weight.data
+        self.embedding.weight.requires_grad = False
+        cnt = 0
+        with open(glove_path, "r") as f:
+            for line in f:
+                parsed = line.rstrip().split(' ') 
+                assert(len(parsed) == embedding.size(1) + 1)
+                w = parsed[0]
+                if word_dict.get(w):
+                    vec = torch.Tensor([float(i) for i in parsed[1:]])
+                    embedding[word_dict[w]].copy_(vec)
+                    cnt += 1
+        print("Total embeded words %d" % cnt) 
 
 
 
