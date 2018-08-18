@@ -26,6 +26,8 @@ class PDTB(object):
         for value in data:
             label_list = value['Sense']
             for label in label_list:
+                label = label.split('.')[0]
+
                 if label == "Comparison":
                     label = 0
                 elif label == "Contingency":
@@ -34,10 +36,8 @@ class PDTB(object):
                     label = 2
                 elif label == "Temporal":
                     label = 3
-                elif label == "NoRel":
-                    continue
                 else:
-                    raise ValueError("unrecognized label")
+                    continue
                 
                 arg1_words = []
                 for word in value['Arg1']['Tokens']:
