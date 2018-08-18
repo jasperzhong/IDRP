@@ -40,16 +40,14 @@ class PDTB(object):
                     continue
                 
                 arg1_words = []
-                for word in value['Arg1']:
-                    w = word['Word']
+                for w in value['Arg1']['Word']:
                     arg1_words.append(w)
                     if not self.word_cnt.get(w):
                         self.word_cnt[w] = 0
                     self.word_cnt[w] += 1
 
                 arg2_words = []
-                for word in value['Arg2']:
-                    w = word['Word']
+                for w in value['Arg2']['Word']:
                     arg2_words.append(w)
                     if not self.word_cnt.get(w):
                         self.word_cnt[w] = 0
