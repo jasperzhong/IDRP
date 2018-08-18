@@ -15,8 +15,10 @@ class PDTB(object):
         
     def load_PDTB(self, mode):
         with open(self.config.resourses.data_base_dir + mode +"_pdtb.json", "r") as f:
-            data = json.load(f)
-    
+            lines = f.readlines()
+
+        data = [json.loads(line) for line in lines]
+
         arg1_sents = []
         arg2_sents = []
         labels = []
@@ -71,7 +73,7 @@ class PDTB(object):
             self.word_to_id[key] = self.vocab_size
             self.vocab_size += 1
         
-        assert(self.config.model.vocab_size, len(self.word_to_id))
+        assert(self.config.model.vocab_size == len(self.word_to_id))
 
         return self.word_to_id
 
