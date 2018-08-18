@@ -24,40 +24,40 @@ class PDTB(object):
         labels = []
 
         for value in data:
-            label = value['Sense'].split('.')[0]
+            label_list = value['Sense']
+            for label in label_list:
+                if label == "Comparison":
+                    label = 0
+                elif label == "Contingency":
+                    label = 1
+                elif label == "Expansion":
+                    label = 2
+                elif label == "Temporal":
+                    label = 3
+                elif label == "NoRel":
+                    continue
+                else:
+                    raise ValueError("unrecognized label")
+                
+                arg1_words = []
+                for word in value['Arg1']['Tokens']:
+                    w = word['Word']
+                    arg1_words.append(w)
+                    if not self.word_cnt.get(w):
+                        self.word_cnt[w] = 0
+                    self.word_cnt[w] += 1
 
-            if label == "Comparison":
-                label = 0
-            elif label == "Contingency":
-                label = 1
-            elif label == "Expansion":
-                label = 2
-            elif label == "Temporal":
-                label = 3
-            elif label == "NoRel":
-                continue
-            else:
-                raise ValueError("unrecognized label")
-            
-            arg1_words = []
-            for word in value['Arg1']['Tokens']:
-                w = word['Word']
-                arg1_words.append(w)
-                if not self.word_cnt.get(w):
-                    self.word_cnt[w] = 0
-                self.word_cnt[w] += 1
+                arg2_words = []
+                for word in value['Arg2']['Tokens']:
+                    w = word['Word']
+                    arg2_words.append(w)
+                    if not self.word_cnt.get(w):
+                        self.word_cnt[w] = 0
+                    self.word_cnt[w] += 1
 
-            arg2_words = []
-            for word in value['Arg2']['Tokens']:
-                w = word['Word']
-                arg2_words.append(w)
-                if not self.word_cnt.get(w):
-                    self.word_cnt[w] = 0
-                self.word_cnt[w] += 1
-
-            arg1_sents.append(arg1_words)
-            arg2_sents.append(arg2_words)
-            labels.append(label)
+                arg1_sents.append(arg1_words)
+                arg2_sents.append(arg2_words)
+                labels.append(label)
         
         assert(len(arg1_sents) == len(arg2_sents) == len(labels))
         
