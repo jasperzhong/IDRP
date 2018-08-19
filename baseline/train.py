@@ -45,7 +45,7 @@ def train(config):
     batch_size = config.training.batch_size
     max_seq_len = config.model.max_seq_len
     
-    loss_func = nn.NLLLoss(torch.FloatTensor([7, 4, 2, 21]).to(device))
+    loss_func = nn.NLLLoss(torch.FloatTensor([4, 2, 1, 8]).to(device))
     optimizer = optim.Adam(model.parameters(), lr=config.training.lr, 
                 weight_decay=config.training.weight_decay) # L2
     
