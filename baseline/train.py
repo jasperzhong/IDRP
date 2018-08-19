@@ -36,9 +36,7 @@ def train(config):
     model.load_pretrained_embedding(config.training.fix_embed, config.resourses.glove_path, word_to_id)
     print("Loading embedding taking %.3f s" % (time.time() - start))
 
-    if torch.cuda.device_count() > 1:
-        print("Multi-GPUs are available!")
-        model = nn.DataParallel(model)
+    
     
     batch_size = config.training.batch_size
     max_seq_len = config.model.max_seq_len

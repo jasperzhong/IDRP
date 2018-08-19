@@ -6,7 +6,7 @@ class ResourcesConfig(object):
     glove_path = "../data/glove.840B.300d.txt"
     stop_word_path = "../data/english.txt"
     data_base_dir = "../data/"
-    model_path = "../model/"
+    model_path = "model/"
     model_name = "single.pkl"
 
 class TrainingConfig(object):
