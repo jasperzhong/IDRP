@@ -29,11 +29,11 @@ def train(config):
     def weights_init(m):
         if isinstance(m, nn.Linear):
             torch.nn.init.normal(m.weight.data,mean=0,std=0.1)
-            torch.nn.init.constant(m.bias.data, 0.1)'''
+            torch.nn.init.constant(m.bias.data, 0.1)
     #model.apply(weights_init)
     if torch.cuda.device_count() > 1:
         print("Multi-GPUs are available!")
-        model = nn.DataParallel(model)
+        model = nn.DataParallel(model)'''
     
     model.to(device)
 

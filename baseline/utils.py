@@ -87,7 +87,7 @@ def sent_to_tensor(batch, word_to_id, max_seq_len):
     
     tensor = torch.zeros(max_seq_len, batch_size, dtype=torch.long)
     for i in range(batch_size):
-        min_len = min(len(batch[i], max_seq_len))
+        min_len = min(len(batch[i]), max_seq_len)
         for j in range(min_len):
             id = word_to_id.get(batch[i][j], 0)
             tensor[j][i] = id
