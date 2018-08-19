@@ -29,9 +29,9 @@ def test(config):
     with torch.no_grad():
         result = []
         for i in range(0, len(dev_arg1_sents), batch_size):
-            arg1 = dev_arg1_sents[i: i + batch_size]
-            arg2 = dev_arg2_sents[i: i + batch_size]
-            label = dev_labels[i: i + batch_size]
+            arg1 = test_arg1_sents[i: i + batch_size]
+            arg2 = test_arg2_sents[i: i + batch_size]
+            label = test_labels[i: i + batch_size]
             
             arg1 = sent_to_tensor(arg1, word_to_id, max_seq_len).to(device)
             arg2 = sent_to_tensor(arg2, word_to_id, max_seq_len).to(device)
