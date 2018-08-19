@@ -89,7 +89,7 @@ def train(config):
                 result.extend(list(torch.max(output, 1)[1].cpu().numpy())) 
 
         # F1 score
-        f1, precision, recall, _  = score(dev_labels, result)
+        f1, precision, recall, _  = score(dev_labels, result, average='binary')
         print("Epoch %d: f1 score: %.2f  precision: %.2f  recall: %.2f" % (epoch, 100 * f1, 
             100 * precision, 100 * recall))
         if f1 > best_f1:
