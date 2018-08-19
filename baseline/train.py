@@ -44,7 +44,7 @@ def train(config):
     max_seq_len = config.model.max_seq_len
     
     loss_func = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=config.training.lr, 
+    optimizer = optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=config.training.lr, 
                 weight_decay=config.training.weight_decay) # L2
 
     print("Start training!")
