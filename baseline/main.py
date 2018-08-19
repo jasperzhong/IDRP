@@ -11,7 +11,7 @@ config = Config()
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-mode', type=str, help="train test or eval")
-parser.add_argument('-type', type=str, help="four classes", choices=config.types)
+parser.add_argument('-type', type=str, help="four classes", choices=config.types, default="Comparison")
 
 parser.add_argument('-lr', type=float, help="learning rate", default=config.training.lr)
 parser.add_argument('-batch', type=int, help="batch size", default=config.training.batch_size)
