@@ -23,9 +23,11 @@ def test(config):
 
     pdtb = PDTB(config)
     # load test dataset 
+    train_arg1_sents, train_arg2_sents, train_labels = pdtb.load_PDTB("train")
+    dev_arg1_sents, dev_arg2_sents, dev_labels = pdtb.load_PDTB("dev")
     test_arg1_sents, test_arg2_sents, test_labels = pdtb.load_PDTB("test")
     word_to_id = pdtb.build_vocab()
-    
+
     batch_size = config.training.batch_size
     max_seq_len = config.model.max_seq_len
 
