@@ -48,6 +48,6 @@ def test(config):
                 outputs.append(models[i](arg1, arg2))
             
             for i in range(len(arg1)):
-                result.append(torch.argmax(outputs[0][i], outputs[1][i], outputs[2][i], outputs[3][i]))
+                result.append(np.argmax([outputs[0][i][1], outputs[1][i][1], outputs[2][i][1], outputs[3][i][1]]))
 
         print(classification_report(test_labels, result))
