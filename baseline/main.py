@@ -18,7 +18,7 @@ parser.add_argument('-batch', type=int, help="batch size", default=config.traini
 parser.add_argument('-l2', type=float, help="l2 regularization", default=config.training.weight_decay)
 parser.add_argument('fix_embed', type=bool, help="whether fix embedding when training", default=True)
 
-parser.add_argument('-hidden', type=int, help="hidden size", defualt=config.model.hidden_size)
+parser.add_argument('-hidden', type=int, help="hidden size", default=config.model.hidden_size)
 parser.add_argument('-n_layers', type=int, help="number of stacked lstm", default=config.model.n_layers)
 
 parser.add_argument('-model_name', type=str, help="model name", default=config.resourses.model_name)
