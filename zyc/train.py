@@ -76,7 +76,7 @@ def train(config):
 
             total_loss += loss.item()
         
-        f1, precision, recall, _  = score(dev_labels, result, average='binary')
+        f1, precision, recall, _  = score(train_labels, result, average='binary')
         print("Epoch %d: train f1 score: %.2f  precision: %.2f  recall: %.2f" % (epoch, 100 * f1, 
             100 * precision, 100 * recall))
         print("Epoch %d train loss: %.3f  time: %.3f s" % (epoch, total_loss / len(train_arg1_sents), time.time() - start))
