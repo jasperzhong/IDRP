@@ -45,7 +45,7 @@ def test(config):
 
             outputs = []
             for i in range(4):
-                outputs.append(model(arg1, arg2))
+                outputs.append(models[i](arg1, arg2))
             
             for i in range(len(arg1)):
                 result.append(torch.argmax(outputs[0][i], outputs[1][i], outputs[2][i], outputs[3][i]))
