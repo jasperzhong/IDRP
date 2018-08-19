@@ -20,9 +20,9 @@ class PDTB(object):
         if mode == "train":
             mode += "_sec_02_20"
         elif mode == "dev":
-            mode += "_sec_21_22"
+            mode += "_sec_00_01"
         elif mode == "test":
-            mode += "_dev_sec_00_01"
+            mode += "_sec_21_22"
 
         # load json file
         with open(self.config.resourses.data_base_dir + self.config.type + "_vs_others/" +
