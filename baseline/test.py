@@ -28,7 +28,7 @@ def test(config):
      # dev
     with torch.no_grad():
         result = []
-        for i in range(0, len(dev_arg1_sents), batch_size):
+        for i in range(0, len(test_arg1_sents), batch_size):
             arg1 = test_arg1_sents[i: i + batch_size]
             arg2 = test_arg2_sents[i: i + batch_size]
             label = test_labels[i: i + batch_size]
