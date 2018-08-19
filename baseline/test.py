@@ -14,7 +14,7 @@ def test(config):
     # load models
     models = []
     for type in config.types:
-        models.append(torch.load(config.resourses.model_path + type + config.resourses.model_name))
+        models.append(torch.load(config.resourses.model_path + type + "_" + config.resourses.model_name))
 
     # load test dataset 
     test_arg1_sents, test_arg2_sents, test_labels = pdtb.load_PDTB("test")
