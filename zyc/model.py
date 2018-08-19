@@ -86,9 +86,10 @@ class Model(nn.Module):
 
         return output
     
-    def load_pretrained_embedding(self, glove_path, word_dict):
+    def load_pretrained_embedding(self, fix_embed, glove_path, word_dict):
         embedding = self.embedding.weight.data
-        self.embedding.weight.requires_grad = False
+        if fix_embed:
+            self.embedding.weight.requires_grad = False
         cnt = 0
         with open(glove_path, "r") as f:
             for line in f:
