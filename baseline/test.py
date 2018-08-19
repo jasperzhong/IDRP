@@ -5,7 +5,7 @@ import numpy as np
 import torch
 from sklearn.metrics import classification_report
 
-from utils import PDTB
+from utils import PDTB, sent_to_tensor
 
 
 def test(config):
