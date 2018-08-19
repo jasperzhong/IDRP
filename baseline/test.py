@@ -24,6 +24,10 @@ def test(config):
     pdtb = PDTB(config)
     # load test dataset 
     test_arg1_sents, test_arg2_sents, test_labels = pdtb.load_PDTB("test")
+    word_to_id = pdtb.build_vocab()
+    
+    batch_size = config.training.batch_size
+    max_seq_len = config.model.max_seq_len
 
      # dev
     with torch.no_grad():
