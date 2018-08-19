@@ -40,11 +40,17 @@ class PDTB(object):
             label_list = value['Sense']
             for label in label_list:
                 label = label.split('.')[0]
-
-                if label == self.config.type:
-                    label = 1
+                
+                if self.config.type == "Ent+Exp":
+                    if label == "Expansion" or label == "EntRel->Expansion":
+                        label = 1
+                    else:
+                        label = 0
                 else:
-                    label = 0
+                    if label == self.config.type:
+                        label = 1
+                    else:
+                        label = 0
                 
                 arg1_words = []
                 for w in value['Arg1']['Word']:
