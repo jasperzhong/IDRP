@@ -25,17 +25,21 @@ def train(config):
                 config.model.hidden_size,
                 config.model.max_seq_len,
                 config.model.n_layers)
-    model.to(device)
-
+   
     pdtb = PDTB(config)
     train_arg1_sents, train_arg2_sents, train_labels = pdtb.load_PDTB("train")
     dev_arg1_sents, dev_arg2_sents, dev_labels = pdtb.load_PDTB("dev")
     word_to_id = pdtb.build_vocab()
+    model.to(device)
     
     start = time.time()
-    model.load_pretrained_embedding(config.resourses.glove_path, config.training.fix_embed, word_to_id)
+    model.load_pretrained_embedding(config.training.fix_embed, config.resourses.glove_path, word_to_id)
     print("Loading embedding taking %.3f s" % (time.time() - start))
 
+    if torch.cuda.device_count() > 1:
+        print("Multi-GPUs are available!")
+        model = nn.DataParallel(model)
+    
     batch_size = config.training.batch_size
     max_seq_len = config.model.max_seq_len
     
