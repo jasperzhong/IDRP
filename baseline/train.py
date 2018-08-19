@@ -22,8 +22,6 @@ def train(config):
                 config.model.embedd_size,
                 config.model.hidden_size,
                 config.model.max_seq_len,
-                config.model.d_a,
-                config.model.r,
                 n_layers=2)
     '''
     def weights_init(m):
