@@ -1,5 +1,6 @@
 /data/
-/model/
+baseline/model/
+zyc/model/
 *pyc
 *ipynb
 /.ipynb_checkpoints/

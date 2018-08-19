@@ -116,4 +116,4 @@ def f1_score(y_true, y_pred):
     precision = 1.0 * num_same / len(y_pred)
     recall = 1.0 * num_same / len(y_true)
     f1 = (2 * precision * recall) / (precision + recall)
-    return f1
+    return f1, precision, recall
