@@ -50,7 +50,7 @@ class Model(nn.Module):
 
         self.linear1 = nn.Linear(
             r * r,
-            2
+            4
         )
 
     def forward(self, arg1, arg2):
@@ -83,6 +83,7 @@ class Model(nn.Module):
         # [B x r x r] -> [B x r*r] -> [B * 4] 
         output = S.view(-1, self.r * self.r)
         output = self.linear1(output)
+        output = F.log_softmax(output, dim=1)
 
         return output
     
@@ -151,3 +152,18 @@ class BilinearAttn(nn.Module):
 
         return xMy
 
+
+
+'''
+if __name__=='__main__':
+    vocab_size = 1000
+    embed_size = 300
+    hidden_size = 256
+
+    model = Model(vocab_size, embed_size, hidden_size, 100)
+    
+    arg1 = torch.randint(0, 1000, size=(100, 32), dtype=torch.long)
+    arg2 = torch.randint(0, 1000, size=(100, 32), dtype=torch.long)
+    output = model(arg1, arg2)
+    print(output[0])
+'''

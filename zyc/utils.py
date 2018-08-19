@@ -1,7 +1,10 @@
-
+"""
+utilities
+"""
 import json
 import random
 import string
+from collections import Counter
 
 import torch
 
@@ -9,12 +12,21 @@ import torch
 class PDTB(object):
     def __init__(self, config):
         self.config = config
-        self.word_to_id = {'<pad>':0, '</s>':1}
+        self.word_to_id = {'<pad>':0, '</s>':1}  
         self.word_cnt = {}
         self.vocab_size = 2
         
     def load_PDTB(self, mode):
-        with open(self.config.resourses.data_base_dir + mode +"_pdtb.json", "r") as f:
+        if mode == "train":
+            mode += "_sec_02_20"
+        elif mode == "dev":
+            mode += "_sec_00_01"
+        elif mode == "test":
+            mode += "_sec_21_22"
+
+        # load json file
+        with open(self.config.resourses.data_base_dir + self.config.type + "_vs_others/" +
+            mode, "r") as f:
             lines = f.readlines()
 
         data = [json.loads(line) for line in lines]
@@ -23,21 +35,22 @@ class PDTB(object):
         arg2_sents = []
         labels = []
 
+        # extract instances
         for value in data:
             label_list = value['Sense']
             for label in label_list:
                 label = label.split('.')[0]
-
-                if label == "Comparison":
-                    label = 0
-                elif label == "Contingency":
-                    label = 1
-                elif label == "Expansion":
-                    label = 2
-                elif label == "Temporal":
-                    label = 3
+                
+                if self.config.type == "Ent+Exp":
+                    if label == "Expansion" or label == "EntRel->Expansion":
+                        label = 1
+                    else:
+                        label = 0
                 else:
-                    continue
+                    if label == self.config.type:
+                        label = 1
+                    else:
+                        label = 0
                 
                 arg1_words = []
                 for w in value['Arg1']['Word']:
@@ -59,10 +72,18 @@ class PDTB(object):
         
         assert(len(arg1_sents) == len(arg2_sents) == len(labels))
         
+        # shuffle
+        c = list(zip(arg1_sents, arg2_sents, labels))
+        random.shuffle(c)
+        arg1_sents, arg2_sents, labels = zip(*c)
+
         return arg1_sents, arg2_sents, labels
 
 
     def build_vocab(self):
+        '''
+        build up vocabulary
+        '''
         self.word_cnt = sorted(self.word_cnt.items(), key = lambda x:int(x[1]), reverse=True)
         self.word_cnt = self.word_cnt[:self.config.model.top_words]
 
@@ -93,5 +114,3 @@ def sent_to_tensor(batch, word_to_id, max_seq_len):
             tensor[j][i] = id
 
     return tensor
-    
-
