@@ -42,7 +42,7 @@ def test(config):
 
         # F1 score
         f1, precision, recall, _  = score(test_labels, result, average='binary')
-        print("f1 score: %.2f  precision: %.2f  recall: %.2f" % (epoch, 100 * f1, 
+        print("f1 score: %.2f  precision: %.2f  recall: %.2f" % (100 * f1, 
             100 * precision, 100 * recall))
 
 def ensemble_test(config):
