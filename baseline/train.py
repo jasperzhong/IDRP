@@ -1,3 +1,6 @@
+"""
+training
+"""
 import os
 import time
 
@@ -5,11 +8,10 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-from sklearn.metrics import classification_report
 
 from config import Config
 from model import Model
-from utils import PDTB, sent_to_tensor
+from utils import PDTB, sent_to_tensor, f1_score
 
 
 def train(config):
@@ -22,42 +24,38 @@ def train(config):
                 config.model.embedd_size,
                 config.model.hidden_size,
                 config.model.max_seq_len,
-                n_layers=2)
-    '''
-    def weights_init(m):
-        if isinstance(m, nn.Linear):
-            torch.nn.init.normal(m.weight.data,mean=0,std=0.1)
-            torch.nn.init.constant(m.bias.data, 0.1)
-    #model.apply(weights_init)
-    if torch.cuda.device_count() > 1:
-        print("Multi-GPUs are available!")
-        model = nn.DataParallel(model)'''
-    
-    model.to(device)
-
+                config.model.n_layers)
+   
     pdtb = PDTB(config)
     train_arg1_sents, train_arg2_sents, train_labels = pdtb.load_PDTB("train")
     dev_arg1_sents, dev_arg2_sents, dev_labels = pdtb.load_PDTB("dev")
     word_to_id = pdtb.build_vocab()
 
+    start = time.time()
+    model.load_pretrained_embedding(config.resourses.glove_path, config.training.fix_embed, word_to_id)
+    print("Loading embedding taking %.3f s" % (time.time() - start))
+
+    if torch.cuda.device_count() > 1:
+        print("Multi-GPUs are available!")
+        model = nn.DataParallel(model)
+    
+    model.to(device)
+
     batch_size = config.training.batch_size
     max_seq_len = config.model.max_seq_len
     
-    loss_func = nn.NLLLoss(torch.FloatTensor([4, 2, 1, 8]).to(device))
+    loss_func = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=config.training.lr, 
                 weight_decay=config.training.weight_decay) # L2
-    
-    start = time.time()
-    model.load_pretrained_embedding(config.resourses.glove_path, word_to_id)
-    print("Loading embedding taking %.3f s" % (time.time() - start))
 
     print("Start training!")
+    best_f1 = 0.0
     for epoch in range(config.training.epochs):
         total_loss = 0.0
-        cnt = 0
         start = time.time()
+
+        # train
         for i in range(0, len(train_arg1_sents), batch_size):
-            loss = 0.0
             optimizer.zero_grad()
 
             arg1 = train_arg1_sents[i: i + batch_size]
@@ -69,15 +67,15 @@ def train(config):
             label = torch.LongTensor(label).to(device)
 
             output = model(arg1, arg2)
-            loss += loss_func(output, label)
+            loss = loss_func(output, label)
             loss.backward()
             optimizer.step()
 
-            total_loss += loss.item() / arg1.size(0)
-            cnt += 1
-        print("Epoch %d train loss: %.3f  time: %.3f s" % (epoch, total_loss / cnt, time.time() - start))
+            total_loss += loss.item()
 
-        # F1 score
+        print("Epoch %d train loss: %.3f  time: %.3f s" % (epoch, total_loss / len(train_arg1_sents), time.time() - start))
+
+        # dev
         with torch.no_grad():
             result = []
             for i in range(0, len(dev_arg1_sents), batch_size):
@@ -92,6 +90,11 @@ def train(config):
                 output = model(arg1, arg2)
                 result.extend(list(torch.max(output, 1)[1].cpu().numpy())) 
 
-            print(classification_report(dev_labels, result))
-
-
+        # F1 score
+        f1 = f1_score(dev_labels, result)
+        print("Epoch %d: f1 score: %.2f" % (epoch, 100 * f1))
+        if f1 > best_f1:
+            best_f1 = f1
+            torch.save(model, config.resourses.model_path + config.type + "_" + 
+                       config.resourses.model_name)
+            print("Model saved!")

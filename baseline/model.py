@@ -1,13 +1,17 @@
-'''
-baseline
-just two LSTMs
-'''
+"""
+model
+"""
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import numpy as np
+
 
 class Model(nn.Module):
+    '''
+    baseline model 
+    just two Bi-LSTMs
+    '''
     def __init__(self, vocab_size, embed_size, hidden_size, seq_len, n_layers=1):
         super(Model, self).__init__()
         self.embed_size = embed_size
@@ -34,18 +38,18 @@ class Model(nn.Module):
         )
 
         self.linear1 = nn.Linear(
-            hidden_size * 2 * seq_len,
-            hidden_size * 2
+            hidden_size * 4 * seq_len,
+            hidden_size * 4
         )
 
         self.linear2 = nn.Linear(
-            hidden_size * 2,
-            100
+            hidden_size * 4,
+            84
         )
 
         self.linear3 = nn.Linear(
-            100,
-            4
+            84,
+            2
         )
 
     def forward(self, arg1, arg2):
@@ -65,33 +69,23 @@ class Model(nn.Module):
         outputs1, hidden1 = self.lstm_1(embeded_1, None)
         outputs2, hidden2 = self.lstm_2(embeded_2, None)
 
-        # [T * B * 2H] -> [T * B * H]
-        outputs1 = (
-            outputs1[:, :, :self.hidden_size] + 
-            outputs1[:, :, self.hidden_size:]
-        )
 
-        outputs2 = (
-            outputs2[:, :, :self.hidden_size] + 
-            outputs2[:, :, self.hidden_size:]
-        )
-
-        # [T * B * 2H] -> [B * T * 2H] -> [B * T x 2H]
+        # [T * B * 4H] -> [B * T * 4H] -> [B * T x 4H]
         output = torch.cat([outputs1, outputs2], 2).transpose(0, 1).contiguous()
         output = output.view(output.size(0), -1)
         
-        
-        # [B * T x 2H] -> ... -> [B * 4] 
+        # [B * T x 4H] -> ... -> [B * 4] 
         output = F.relu(self.linear1(output))
         output = F.relu(self.linear2(output))
         output = self.linear3(output)
-        output = F.log_softmax(output, dim=1)
 
         return output
     
-    def load_pretrained_embedding(self, glove_path, word_dict):
+    def load_pretrained_embedding(self, fix_embed, glove_path, word_dict):
         embedding = self.embedding.weight.data
-        self.embedding.weight.requires_grad = False
+        if fix_embed:
+            self.embedding.weight.requires_grad = False
+        
         cnt = 0
         with open(glove_path, "r") as f:
             for line in f:
@@ -103,19 +97,3 @@ class Model(nn.Module):
                     embedding[word_dict[w]].copy_(vec)
                     cnt += 1
         print("Total embeded words %d" % cnt) 
-
-
-
-'''
-if __name__=='__main__':
-    vocab_size = 1000
-    embed_size = 300
-    hidden_size = 256
-
-    model = Model(vocab_size, embed_size, hidden_size, 100)
-    
-    arg1 = torch.randint(0, 1000, size=(100, 32), dtype=torch.long)
-    arg2 = torch.randint(0, 1000, size=(100, 32), dtype=torch.long)
-    output = model(arg1, arg2)
-    print(output[0])
-'''

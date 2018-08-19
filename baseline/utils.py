@@ -1,7 +1,10 @@
-
+"""
+utilities
+"""
 import json
 import random
 import string
+from collections import Counter
 
 import torch
 
@@ -9,12 +12,21 @@ import torch
 class PDTB(object):
     def __init__(self, config):
         self.config = config
-        self.word_to_id = {'<pad>':0, '</s>':1}
+        self.word_to_id = {'<pad>':0, '</s>':1}  
         self.word_cnt = {}
         self.vocab_size = 2
         
     def load_PDTB(self, mode):
-        with open(self.config.resourses.data_base_dir + mode +"_pdtb.json", "r") as f:
+        if mode == "train":
+            mode += "_sec_02_20"
+        elif mode == "dev":
+            mode += "_sec_21_22"
+        elif mode == "test":
+            mode += "_dev_sec_00_01"
+
+        # load json file
+        with open(self.config.resourses.data_base_dir + self.config.type + "_vs_others/" +
+            mode, "r") as f:
             lines = f.readlines()
 
         data = [json.loads(line) for line in lines]
@@ -23,21 +35,16 @@ class PDTB(object):
         arg2_sents = []
         labels = []
 
+        # extract instances
         for value in data:
             label_list = value['Sense']
             for label in label_list:
                 label = label.split('.')[0]
 
-                if label == "Comparison":
-                    label = 0
-                elif label == "Contingency":
+                if label == self.config.type:
                     label = 1
-                elif label == "Expansion":
-                    label = 2
-                elif label == "Temporal":
-                    label = 3
                 else:
-                    continue
+                    label = 0
                 
                 arg1_words = []
                 for w in value['Arg1']['Word']:
@@ -63,6 +70,9 @@ class PDTB(object):
 
 
     def build_vocab(self):
+        '''
+        build up vocabulary
+        '''
         self.word_cnt = sorted(self.word_cnt.items(), key = lambda x:int(x[1]), reverse=True)
         self.word_cnt = self.word_cnt[:self.config.model.top_words]
 
@@ -95,3 +105,15 @@ def sent_to_tensor(batch, word_to_id, max_seq_len):
     return tensor
     
 
+def f1_score(y_true, y_pred):
+    '''
+    y_true and y_pred should only consist of 0 or 1
+    '''
+    common = Counter(y_true) & Counter(y_pred)
+    num_same= sum(common.values())
+    if num_same == 0:
+        return 0
+    precision = 1.0 * num_same / len(y_pred)
+    recall = 1.0 * num_same / len(y_true)
+    f1 = (2 * precision * recall) / (precision + recall)
+    return f1
