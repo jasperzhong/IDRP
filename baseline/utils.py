@@ -105,15 +105,3 @@ def sent_to_tensor(batch, word_to_id, max_seq_len):
     return tensor
     
 
-def f1_score(y_true, y_pred):
-    '''
-    y_true and y_pred should only consist of 0 or 1
-    '''
-    common = Counter(y_true) & Counter(y_pred)
-    num_same= sum(common.values())
-    if num_same == 0:
-        return 0
-    precision = 1.0 * num_same / len(y_pred)
-    recall = 1.0 * num_same / len(y_true)
-    f1 = (2 * precision * recall) / (precision + recall)
-    return f1, precision, recall

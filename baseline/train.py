@@ -8,10 +8,11 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
+from sklearn.metrics import precision_recall_fscore_support as score
 
 from config import Config
 from model import Model
-from utils import PDTB, sent_to_tensor, f1_score
+from utils import PDTB, sent_to_tensor
 
 
 def train(config):
@@ -88,7 +89,7 @@ def train(config):
                 result.extend(list(torch.max(output, 1)[1].cpu().numpy())) 
 
         # F1 score
-        f1, precision, recall  = f1_score(dev_labels, result)
+        f1, precision, recall, _  = score(dev_labels, result)
         print("Epoch %d: f1 score: %.2f  precision: %.2f  recall: %.2f" % (epoch, 100 * f1, 
             100 * precision, 100 * recall))
         if f1 > best_f1:
