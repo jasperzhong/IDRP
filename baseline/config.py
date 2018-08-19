@@ -10,7 +10,7 @@ class ResourcesConfig(object):
     model_name = "single.pkl"
 
 class TrainingConfig(object):
-    lr = 1e-4
+    lr = 1e-3
     batch_size = 32
     epochs = 50
     weight_decay = 1e-5

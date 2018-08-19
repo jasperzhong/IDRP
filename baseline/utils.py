@@ -66,6 +66,11 @@ class PDTB(object):
         
         assert(len(arg1_sents) == len(arg2_sents) == len(labels))
         
+        # shuffle
+        c = list(zip(arg1_sents, arg2_sents, labels))
+        random.shuffle(c)
+        arg1_sents, arg2_sents, labels = zip(*c)
+
         return arg1_sents, arg2_sents, labels
 
 
@@ -103,5 +108,3 @@ def sent_to_tensor(batch, word_to_id, max_seq_len):
             tensor[j][i] = id
 
     return tensor
-    
-
