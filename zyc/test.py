@@ -41,7 +41,7 @@ def test(config):
             result.extend(list(torch.max(output, 1)[1].cpu().numpy())) 
 
         # F1 score
-        f1, precision, recall, _  = score(test_labels, result, average='binary')
+        precision, recall, f1, _  = score(test_labels, result, average='binary')
         print("f1 score: %.2f  precision: %.2f  recall: %.2f" % (100 * f1, 
             100 * precision, 100 * recall))
 
