@@ -24,8 +24,8 @@ class ModelConfig(object):
     vocab_size = 10002
     hidden_size = 128 
     n_layers = 3
-    r = 10
-    d_a = 128
+    r = 30
+    d_a = 256
 
     top_words = 10000
 

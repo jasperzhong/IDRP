@@ -38,12 +38,12 @@ class Model(nn.Module):
         )
 
         self.linear1 = nn.Linear(
-            hidden_size * 4,
-            hidden_size
+            hidden_size * 4 * seq_len,
+            hidden_size * 4
         )
 
         self.linear2 = nn.Linear(
-            hidden_size,
+            hidden_size * 4,
             84
         )
 
@@ -69,13 +69,12 @@ class Model(nn.Module):
         outputs1, hidden1 = self.lstm_1(embeded_1, None)
         outputs2, hidden2 = self.lstm_2(embeded_2, None)
 
-        # [T * B * 4H] -> [B * T * 4H] 
-        output = torch.cat([outputs1, outputs2], 2).transpose(0, 1).contiguous()
 
-        # [B * T * 4H] -> [B * 4H]
-        output = torch.sum(output, dim=1)
+        # [T * B * 4H] -> [B * T * 4H] -> [B * T x 4H]
+        output = torch.cat([outputs1, outputs2], 2).transpose(0, 1).contiguous()
+        output = output.view(output.size(0), -1)
         
-        # [B * 4H] -> ... -> [B * 4] 
+        # [B * T x 4H] -> ... -> [B * 4] 
         output = F.relu(self.linear1(output))
         output = F.relu(self.linear2(output))
         output = self.linear3(output)

@@ -50,6 +50,16 @@ class Model(nn.Module):
 
         self.linear1 = nn.Linear(
             r * r,
+            192
+        )
+
+        self.linear2 = nn.Linear(
+            192,
+            84
+        )
+
+        self.linear3 = nn.Linear(
+            84,
             2
         )
 
@@ -80,9 +90,11 @@ class Model(nn.Module):
         S = self.inter_attn(A, B)
         
         # flatten and mlp
-        # [B x r x r] -> [B x r*r] -> [B * 4] 
+        # [B x r x r] -> [B x r*r] -> ... -> [B * 4] 
         output = S.view(-1, self.r * self.r)
-        output = self.linear1(output)
+        output = F.relu(self.linear1(output))
+        output = F.relu(self.linear2(output))
+        output = self.linear3(output)
 
         return output
     

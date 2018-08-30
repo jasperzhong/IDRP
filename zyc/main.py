@@ -2,6 +2,7 @@
 main func
 """
 import argparse
+import os 
 
 from config import Config
 from train import train
@@ -12,6 +13,7 @@ config = Config()
 parser = argparse.ArgumentParser()
 parser.add_argument('-mode', type=str, help="train test or eval")
 parser.add_argument('-type', type=str, help="four classes", choices=config.types, default="Comparison")
+parser.add_argument('-gpu', type=str, help="select a gpu to run")
 
 parser.add_argument('-lr', type=float, help="learning rate", default=config.training.lr)
 parser.add_argument('-batch', type=int, help="batch size", default=config.training.batch_size)
@@ -26,6 +28,7 @@ parser.add_argument('-model_name', type=str, help="model name", default=config.r
 args = parser.parse_args()
 
 config.type = args.type
+os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu
 
 config.training.lr = args.lr
 config.training.batch_size = args.batch
